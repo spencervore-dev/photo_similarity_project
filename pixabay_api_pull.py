@@ -8,8 +8,16 @@ import traceback
 import re
 import shutil
 from datetime import datetime
+import time
+import random as rand
 
 import config_pixabay as c
+
+
+# define cache - set to 24 hours
+import requests_cache
+requests_cache.install_cache(cache_name='pixabay_cache', backend='sqlite', expire_after=24*60*60)
+
 
 # Some variables to track progress of script
 total_images_downloaded = 0
@@ -85,10 +93,11 @@ def download_images(data, filepath_destination, page = None, search_term = "", v
         img_id = photo_json['id']
         img_url = photo_json['webformatURL']
         title = photo_json['pageURL'].strip().split('/')[-2]
-        print(photo_json['pageURL'])
-        print(title)
+        if verbose:
+            print(photo_json['pageURL'])
+            print(title)
         title = format_string(title)
-        print(title)
+        if verbose: print(title)
 
         photographer = photo_json['user']
         photographer = format_string(photographer)
@@ -133,6 +142,8 @@ def download_images(data, filepath_destination, page = None, search_term = "", v
                 print(traceback.format_exc())
                 time.sleep(10) # Wait 10 seconds if call fails to let things cool off...
 
+        # Slow down the request rate a bit, if needed
+        time.sleep(image_pause_time)
     return images_downloaded
 
 
@@ -148,15 +159,19 @@ url = str(c.url)
 filepath_destination = str(c.filepath_destination)
 max_api_calls = int(c.max_api_calls)
 verbose = bool(c.verbose)
+image_pause_time = int(c.image_pause_time)
+page_pause_time = int(c.page_pause_time)
 
 # Just keep looping over api calls
 calls = 1
 while calls <= max_api_calls:
 
     # Get list of image URLs as Json from pexel API
+    print(f"Fetching page {calls}. Each page contains {per_page} image results...")
     url_iter = url
     if calls > 1:
         url_iter = url + f"&page={calls}"
+    if verbose: print(url_iter)
     data = api_call(config_pixabay_api_key, url_iter, verbose=verbose)
     if "terminate" in data and data["terminate"] == True:
         print("No next page of results... end of results reached")
@@ -165,14 +180,15 @@ while calls <= max_api_calls:
 
     if verbose: print(data.keys())
 
-    if calls == 0:
+    if calls == 1:
         print(f"TOTAL NUMBER OF AVAILABLE IMAGES IS: {data['totalHits']}\n\n")
 
     # Parse image list json and download each image url to a folder
     total_images_downloaded += download_images(data, filepath_destination,
             page=calls, search_term = search_term, verbose = verbose)
 
-
+    print("Taking a short break")
+    time.sleep(page_pause_time)
 
     '''
     if 'next_page' in data:

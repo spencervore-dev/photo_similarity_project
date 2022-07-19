@@ -3,3 +3,4 @@
 *__pycache__*
 *.config_pixabay.py.swp
 *.config.py.swp
+*.sqlite
