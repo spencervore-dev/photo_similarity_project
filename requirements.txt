@@ -1,2 +1,7 @@
 requests
 requests_cache
+scikit-learn
+matplotlib
+imageio
+pandas
+pyqt5
