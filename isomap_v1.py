@@ -31,7 +31,7 @@ import numpy as np
 #############################################################
 
 ## Configuration
-filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/test_mojtaba/*.jpeg"
+filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium/*.jpeg"
 make_plots = True
 
 #################################################################
@@ -125,7 +125,7 @@ if make_plots:
     ax.set_ylabel('dimension: 2')
 
     # plot Isomap results
-    num_images = :qimages_count
+    num_images = images_count
     image_dimensions = (min_dimension, min_dimension, 3)
     x_size = (max(manifold_2D['dimension 1']) - min(manifold_2D['dimension 1'])) * 0.12
     y_size = (max(manifold_2D['dimension 2']) - min(manifold_2D['dimension 2'])) * 0.12
