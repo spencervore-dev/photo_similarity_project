@@ -31,7 +31,10 @@ import numpy as np
 #############################################################
 
 ## Configuration
-filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium/*.jpeg"
+# filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium/*.jpeg"
+filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/test_mojtaba/*.jpeg"
+filepath = "/home/spencervore/OneDrive/isye6740_project_data/pixabay/green/*.jpg"
+
 make_plots = True
 
 #################################################################
@@ -66,6 +69,10 @@ for filename in glob.glob(filepath):
             rgb = np.pad(rgb, pad_width=[(zpad, zpad),(0, 0),(0, 0)], mode="constant")
         else:
             rgb = np.pad(rgb, pad_width=[(zpad, zpad),(1, 0),(0, 0)], mode="constant")
+    else:
+        # Case if image is perfect square already... still need to convert to numpy
+        # so everything comes out in same format
+        rgb = np.array(rgb)
             
     ######### cut the images to the minimum dimension of the image in the folder
     ######### to make them all the same size.
@@ -73,13 +80,19 @@ for filename in glob.glob(filepath):
     lower_cut = (rgb_shape - min_dimension)/2
     upper_cut = rgb_shape - (rgb_shape - min_dimension)/2
 
+    '''
     if (lower_cut % 2) == 0:
         rgb = rgb[int(lower_cut):int(upper_cut)+1, int(lower_cut):int(upper_cut)+1, ]
     else:
         rgb = rgb[int(lower_cut):int(upper_cut), int(lower_cut):int(upper_cut), ]
+    '''
+    # I think the above was making this come out as two different sizes. For this to work, everything must be exactly
+    # the same size no matter how it's processed.
+    rgb = rgb[int(lower_cut):int(upper_cut), int(lower_cut):int(upper_cut), ]
 
     images.append(rgb.flatten())
 
+images=np.array(images)
 images_count = len(images)
 
 '''
@@ -96,9 +109,12 @@ for i in range(images_count, 0, -1):
 del images
 '''
 
+'''
 pd.options.display.max_columns = 7
 df = pd.DataFrame(images)
 df.head()
+'''
+
 
 #####################################################
 ######## ISOMAP with 6 neighbors and reduce to 2 s (each image s reduces to 2)
