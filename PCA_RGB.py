@@ -5,7 +5,6 @@ from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 import matplotlib.image as mpimg
 import imageio as iio
-import skimage.io as skio
 import math
 import pandas as pd
 import cv2
@@ -24,7 +23,7 @@ import numpy as np
 #filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/test_mojtaba/*.jpeg"
 #filepath = "/home/spencervore/OneDrive/isye6740_project_data/pixabay/green/*.jpg"
 
-filepath = r'C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\pexel\test_lesean'
+filepath = r'/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium'
 make_plots = True
 
 #################################################################

@@ -3,12 +3,11 @@ import os
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import glob
 from sklearn.decomposition import PCA
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 # set path to directory with pics
-path = "C:/Users/lesea/Georgia Institute of Technology/Vore, Spencer E - isye6740_project_data/pexel/test_lesean"
+path = "/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium"
 #path = r"C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\pexel\test_mojtaba"
 
 r = 500

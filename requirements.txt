@@ -1,7 +1,9 @@
-requests
+requests,
 requests_cache
 scikit-learn
 matplotlib
 imageio
 pandas
 pyqt5
+opencv-python-headless
+numpy

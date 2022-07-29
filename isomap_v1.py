@@ -1,13 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Jul 22 16:16:01 2022
-
-@author: mojtabataghipourkaffash
-"""
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
 Created on Mon Jul 18 03:46:56 2022
 
 @author: mojtabataghipourkaffash
