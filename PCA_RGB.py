@@ -1,15 +1,5 @@
-from sklearn.datasets import load_digits
-from sklearn.manifold import Isomap
-from sklearn import manifold
-from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
-import matplotlib.image as mpimg
-import imageio as iio
-import math
-import pandas as pd
 import cv2
-import scipy.io
-import glob
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,106 +9,85 @@ import numpy as np
 #############################################################
 
 ## Configuration
-# filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium/*.jpeg"
-#filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/test_mojtaba/*.jpeg"
-#filepath = "/home/spencervore/OneDrive/isye6740_project_data/pixabay/green/*.jpg"
+path = r'C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\pixabay\test_transparent'
 
-filepath = r'/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium'
-make_plots = True
+### for some reason this one image does not work:
+# "pixabay_image__pg0002_ind125_imgid7086605_animals__animal_feline_tiger"
 
-#################################################################
-# Find minimum dimension of the images (x or y dim) in the folder
-#################################################################
-print("Finding min dimensions")
-dimensions = []
-for img in os.listdir(filepath):
-    dimensions.append(cv2.imread(os.path.join(filepath, img)).shape[0])
-    dimensions.append(cv2.imread(os.path.join(filepath, img)).shape[1])
-min_dimension = min(dimensions)
+########## Initialize ##########
+# read in image, flatten it, put it into an array
+r = 500
+c = 500
+flat_pics = []
+pixels = []
+for img in os.listdir(path):
+    pic = cv2.imread(os.path.join(path, img))
+    #pic = cv2.cvtColor(pic, cv2.COLOR_BGR2GRAY)
+    pic = cv2.resize(pic, (r, c))
+    # flatten image
+    pic = np.array(pic.reshape(r * c, 3))
+    flat_pic = pic.flatten()
 
-#################################################################
-# zero padding to make the images square
-#################################################################
-print("Zero padding and standardizing image sizes")
-images = []
-for filename in os.listdir(filepath):
-    rgb = cv2.imread(os.path.join(filepath, filename))
-    diff = max(rgb.shape[0:2]) - min(rgb.shape[0:2])  # find the number of zero pad
-    zpad = int(diff / 2) + 1
-    x, y = rgb.shape[1], rgb.shape[0]
+    flat_pics.append(flat_pic)
 
-    # decide which dimension to zero pad, and adjust if the dimension difference is even or odd
-    if x < y:
-        if (diff % 2) == 0:
-            rgb = np.pad(rgb, pad_width=[(0, 0), (zpad, zpad), (0, 0)], mode="constant")
-        else:
-            rgb = np.pad(rgb, pad_width=[(1, 0), (zpad, zpad), (0, 0)], mode="constant")
-    elif x > y:
-        if (diff % 2) == 0:
-            rgb = np.pad(rgb, pad_width=[(zpad, zpad), (0, 0), (0, 0)], mode="constant")
-        else:
-            rgb = np.pad(rgb, pad_width=[(zpad, zpad), (1, 0), (0, 0)], mode="constant")
-    else:
-        # Case if image is perfect square already... still need to convert to numpy
-        # so everything comes out in same format
-        rgb = np.array(rgb)
-
-    ######### cut the images to the minimum dimension of the image in the folder
-    ######### to make them all the same size.
-    rgb_shape = rgb.shape[0]
-    lower_cut = (rgb_shape - min_dimension) / 2
-    upper_cut = rgb_shape - (rgb_shape - min_dimension) / 2
-
-    # I think the above was making this come out as two different sizes. For this to work, everything must be exactly
-    # the same size no matter how it's processed.
-    rgb = rgb[int(lower_cut):int(upper_cut), int(lower_cut):int(upper_cut), ]
-
-    images.append(rgb.flatten())
-
-images = np.array(images)
-images_count = len(images)
-
+flat_pics = np.array(flat_pics)
 #####################################################
 ######## PCA with 2 PCs
 #####################################################
-print("Run PCA")
+print("Running PCA")
 pca = PCA(n_components=2)
-pca_imgs = pca.fit_transform(images)
-pic_array = np.array(pca_imgs)
+pca_imgs = pca.fit_transform(flat_pics)
 
-x = pic_array[0]
-y = pic_array[1]
+x = np.array(pca_imgs[:, 0])
+y = np.array(pca_imgs[:, 1])
 
-####################################
+#####################################################
+########### Outliers ###############
+#####################################################
+print("Removing Outliers")
+# find outliers
+x_outlier = np.where(x > 75000)[0].tolist()
+y_outlier = np.where(y > 40000)[0].tolist()
+outliers = x_outlier + y_outlier
+outliers = np.unique(np.array(outliers))
+
+# remove outliers
+pca_imgs = np.delete(pca_imgs, outliers, 0)
+flat_pics = np.delete(flat_pics, outliers, 0)
+
+# redefine x and y
+x = np.array(pca_imgs[:, 0])
+y = np.array(pca_imgs[:, 1])
+
+#####################################################
 ########### Plotting ###############
-####################################
+#####################################################
 print("Plotting results")
-if make_plots:
-    fig = plt.figure()
-    fig.set_size_inches(9, 9)
-    ax = fig.add_subplot(111)
-    plt.title('2D Plot Using PCA of RGB Animal Images')
-    plt.xlabel('Principal Component 1')
-    plt.ylabel('Principal Component 2')
 
-    # plot PCA results
-    num_images = images_count
-    image_dimensions = (min_dimension, min_dimension, 3)
-    x_size = (max(x) - min(x)) * 0.25
-    y_size = (max(y) - min(y)) * 0.1
+fig, ax = plt.subplots()
+plt.title('2D Plot Using PCA of RGB Animal Images')
+plt.xlabel('Principal Component 1')
+plt.ylabel('Principal Component 2')
 
-    pic = 0
-    for p in pic_array:
-        x0 = p[0] - (x_size / 2.)
-        x1 = p[0] + (x_size / 2.)
-        y0 = p[1] - (y_size / 2.)
-        y1 = p[1] + (y_size / 2.)
-        img = images[pic].reshape(image_dimensions)
-        ax.imshow(img, aspect='auto', interpolation='nearest',
-                  zorder=100000, extent=(x0, x1, y0, y1))
+x_size = (max(x) - min(x))
+y_size = (max(y) - min(y))
+size = min(x_size, y_size)
+x_size = size * .075
+y_size = size * .075
 
-        pic += 1
-    # Show 2D components plot
-    ax.scatter(pic_array[0], pic_array[1], marker='.', alpha=0.7)
+pic = 0
+for p in pca_imgs:
+    x0 = p[0] - (x_size / 2)
+    x1 = p[0] + (x_size / 2)
+    y0 = p[1] - (y_size / 2)
+    y1 = p[1] + (y_size / 2)
 
-    plt.show()
+    img = flat_pics[pic].reshape(r, c, 3)
+
+    ax.imshow(cv2.cvtColor(img, cv2.COLOR_BGR2RGB), extent=(x0, x1, y0, y1))
+    ax.scatter(x, y, marker="None", alpha=0.7)
+
+    pic += 1
+
+plt.savefig('pca_RGB.png')
+plt.show()
