@@ -23,13 +23,13 @@ import os
 
 ## Configuration
 # filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/green_medium/*.jpeg"
-filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/test_mojtaba/*.jpeg"
-filepath = "/home/spencervore/OneDrive/isye6740_project_data/pixabay/transparent/"  # *.png"
+# filepath = "/home/spencervore/OneDrive/isye6740_project_data/pexel/test_mojtaba/*.jpeg"
+filepath = "/home/spencervore/OneDrive/isye6740_project_data/pixabay/transparent/*.png"
 
 make_plots = True
 
 
-'''
+
 #################################################################
 # Find minimum dimension of the images (x or y dim) in the folder
 #################################################################
@@ -105,7 +105,7 @@ for img in os.listdir(filepath):
     flat_images.append(flat_img)
 
 images = np.array(flat_images)
-
+'''
 
 
 #####################################################
