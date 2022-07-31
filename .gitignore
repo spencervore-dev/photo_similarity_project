@@ -5,3 +5,6 @@
 *.config.py.swp
 *.sqlite
 *.idea/
+*.png
+*.jpeg
+*.jpg
