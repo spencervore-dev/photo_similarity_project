@@ -8,9 +8,8 @@ from sklearn.decomposition import PCA
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
 # set path to directory with pics
-#path = "C:/Users/lesea/Georgia Institute of Technology/Vore, Spencer E - isye6740_project_data/pexel/test_lesean"
-#path = r"C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\pexel\test_mojtaba"
-path = r"C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\pixabay\test_transparent"
+#path = r"C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\pixabay\test_transparent"
+path = r"C:\Users\lesea\Georgia Institute of Technology\Vore, Spencer E - isye6740_project_data\test"
 
 r = 1000
 c = 1000
@@ -31,6 +30,7 @@ pic_array = np.array(pics)
 ########### Running PCA ###############
 #####################################################
 # do PCA with 2 PCs
+print("running PCA")
 pca = PCA(n_components=2)
 pca_imgs = pca.fit_transform(pic_array)
 
@@ -87,5 +87,5 @@ for p in pca_imgs:
 
     pic += 1
 
-plt.savefig('pca_grayscale.png')
+plt.savefig('C:/Users/lesea/OneDrive/Documents/GA Tech/Summer 2022/ISYE 6740/Project/pca_grayscale.png')
 plt.show()
